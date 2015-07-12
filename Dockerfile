@@ -95,4 +95,4 @@ RUN apt-get update \
 COPY ./supervisor/nginx-php.conf /etc/supervisor/conf.d/nginx-php.conf
 
 # Main process
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-n", "-c /etc/supervisor/conf.d/nginx-php.conf"]
