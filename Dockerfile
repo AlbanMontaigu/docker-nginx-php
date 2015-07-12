@@ -11,6 +11,9 @@ FROM amontaigu/nginx
 # Maintainer
 MAINTAINER alban.montaigu@gmail.com
 
+# Let the conatiner know that there is no tty
+ENV DEBIAN_FRONTEND noninteractive
+
 # ----------------------------------------------------------------------------------------------------------------
 # Under this line, this is the official php install process
 #
@@ -30,50 +33,50 @@ ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group
 
 ENV GPG_KEYS 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1
 RUN set -xe \
-	&& for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done
+    && for key in $GPG_KEYS; do \
+        gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+    done
 
 ENV PHP_VERSION 5.6.10
 
 # --enable-mysqlnd is included below because it's harder to compile after the fact the extensions are (since it's a plugin for several extensions, not an extension in itself)
 RUN buildDeps=" \
-		$PHP_EXTRA_BUILD_DEPS \
-		libcurl4-openssl-dev \
-		libpcre3-dev \
-		libreadline6-dev \
-		librecode-dev \
-		libsqlite3-dev \
-		libssl-dev \
-		libxml2-dev \
-		xz-utils \
-	" \
-	&& set -x \
-	&& apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
-	&& curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz/from/this/mirror" -o php.tar.xz \
-	&& curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz.asc/from/this/mirror" -o php.tar.xz.asc \
-	&& gpg --verify php.tar.xz.asc \
-	&& mkdir -p /usr/src/php \
-	&& tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
-	&& rm php.tar.xz* \
-	&& cd /usr/src/php \
-	&& ./configure \
-		--with-config-file-path="$PHP_INI_DIR" \
-		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-		$PHP_EXTRA_CONFIGURE_ARGS \
-		--disable-cgi \
-		--enable-mysqlnd \
-		--with-curl \
-		--with-openssl \
-		--with-pcre \
-		--with-readline \
-		--with-recode \
-		--with-zlib \
-	&& make -j"$(nproc)" \
-	&& make install \
-	&& { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
-	&& make clean
+        $PHP_EXTRA_BUILD_DEPS \
+        libcurl4-openssl-dev \
+        libpcre3-dev \
+        libreadline6-dev \
+        librecode-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libxml2-dev \
+        xz-utils \
+    " \
+    && set -x \
+    && apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+    && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz/from/this/mirror" -o php.tar.xz \
+    && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz.asc/from/this/mirror" -o php.tar.xz.asc \
+    && gpg --verify php.tar.xz.asc \
+    && mkdir -p /usr/src/php \
+    && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
+    && rm php.tar.xz* \
+    && cd /usr/src/php \
+    && ./configure \
+        --with-config-file-path="$PHP_INI_DIR" \
+        --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+        $PHP_EXTRA_CONFIGURE_ARGS \
+        --disable-cgi \
+        --enable-mysqlnd \
+        --with-curl \
+        --with-openssl \
+        --with-pcre \
+        --with-readline \
+        --with-recode \
+        --with-zlib \
+    && make -j"$(nproc)" \
+    && make install \
+    && { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
+    && make clean
 
 COPY ./php/docker-php-ext-* /usr/local/bin/
 COPY ./php/php-fpm.conf /usr/local/etc/
@@ -91,8 +94,8 @@ WORKDIR /var/www/html
 
 # Supervisor install and configuration
 RUN apt-get update \
-	&& apt-get install -y supervisor \
-	&& mkdir -p /var/log/supervisor
+    && apt-get install -y supervisor \
+    && mkdir -p /var/log/supervisor
 COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Main process
