@@ -91,8 +91,9 @@ WORKDIR /var/www/html
 
 # Supervisor install and configuration
 RUN apt-get update \
-	&& apt-get install -y supervisor
-COPY ./supervisor/nginx-php.conf /etc/supervisor/conf.d/nginx-php.conf
+	&& apt-get install -y supervisor \
+	&& mkdir -p /var/log/supervisor
+COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Main process
-CMD ["/usr/bin/supervisord", "-n", "-c /etc/supervisor/conf.d/nginx-php.conf"]
+CMD ["/usr/bin/supervisord"]
