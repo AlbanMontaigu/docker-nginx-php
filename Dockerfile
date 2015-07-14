@@ -29,9 +29,14 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y supervisor \
     && rm -r /var/lib/apt/lists/*
 
+# Custom install custom command for php ext
+COPY ./php/docker-php-ext-* /usr/local/bin/
+COPY ./php/php-fpm.conf /usr/local/etc/
+
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
     && mkdir -p /var/log/supervisor \
+    && chmod +x /usr/local/bin/docker-php-ext-* \
     && set -xe \
     && for key in $GPG_KEYS; do \
         gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
@@ -76,10 +81,6 @@ RUN buildDeps=" \
     && { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
     && make clean
-
-# Custom install custom command for php ext
-COPY ./php/docker-php-ext-* /usr/local/bin/
-COPY ./php/php-fpm.conf /usr/local/etc/
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
