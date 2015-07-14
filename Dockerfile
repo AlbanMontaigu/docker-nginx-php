@@ -3,6 +3,10 @@
 # NGINX with PHP-FPM
 #
 # @see https://github.com/AlbanMontaigu/docker-nginx/blob/master/Dockerfile
+# @see https://github.com/ngineered/nginx-php-fpm
+# @see https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps
+# @see https://docs.docker.com/articles/using_supervisord/
+# @see https://github.com/docker-library/php/blob/a413eb0123d10321928696ffea7442bed7dc0dc7/5.6/fpm/Dockerfile
 # ================================================================================================================
 
 # Base is a nginx install customized bye me
@@ -11,35 +15,29 @@ FROM amontaigu/nginx
 # Maintainer
 MAINTAINER alban.montaigu@gmail.com
 
-# Let the conatiner know that there is no tty
-ENV DEBIAN_FRONTEND noninteractive
+# Environment configuration
+ENV DEBIAN_FRONTEND="noninteractive" \
+    PHP_VERSION="5.6.10" \
+    PHP_INI_DIR="/usr/local/etc/php" \
+    PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \
+    GPG_KEYS="6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1"
 
+# System update & persistent / runtime deps && phpize deps
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y ca-certificates curl libpcre3 librecode0 libsqlite3-0 libxml2 --no-install-recommends \
+    && apt-get install -y autoconf file g++ gcc libc-dev make pkg-config re2c --no-install-recommends \
+    && apt-get install -y supervisor \
+    && rm -r /var/lib/apt/lists/*
 
-# ----------------------------------------------------------------------------------------------------------------
-# Under this line, this is the official php install process
-#
-# @see https://github.com/docker-library/php/blob/a413eb0123d10321928696ffea7442bed7dc0dc7/5.6/fpm/Dockerfile
-# ----------------------------------------------------------------------------------------------------------------
-
-# persistent / runtime deps
-RUN apt-get update && apt-get install -y ca-certificates curl libpcre3 librecode0 libsqlite3-0 libxml2 --no-install-recommends && rm -r /var/lib/apt/lists/*
-
-# phpize deps
-RUN apt-get update && apt-get install -y autoconf file g++ gcc libc-dev make pkg-config re2c --no-install-recommends && rm -r /var/lib/apt/lists/*
-
-ENV PHP_INI_DIR /usr/local/etc/php
-RUN mkdir -p $PHP_INI_DIR/conf.d
-
-ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx
-
-ENV GPG_KEYS 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1
-RUN set -xe \
+# System preparation
+RUN mkdir -p $PHP_INI_DIR/conf.d \
+    && mkdir -p /var/log/supervisor \
+    && set -xe \
     && for key in $GPG_KEYS; do \
         gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
     done
 
-ENV PHP_VERSION 5.6.10
-
+# Build PHP from source !
 # --enable-mysqlnd is included below because it's harder to compile after the fact the extensions are (since it's a plugin for several extensions, not an extension in itself)
 RUN buildDeps=" \
         $PHP_EXTRA_BUILD_DEPS \
@@ -79,29 +77,19 @@ RUN buildDeps=" \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
     && make clean
 
+# Custom install custom command for php ext
 COPY ./php/docker-php-ext-* /usr/local/bin/
 COPY ./php/php-fpm.conf /usr/local/etc/
-
-WORKDIR /var/www
-VOLUME /var/www
-
-
-# ----------------------------------------------------------------------------------------------------------------
-# Under this line, customization nginx and finally supervisord stuff
-#
-# @see https://github.com/ngineered/nginx-php-fpm
-# @see https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps
-# @see https://docs.docker.com/articles/using_supervisord/
-# ----------------------------------------------------------------------------------------------------------------
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
 
-# Supervisor install and configuration
-RUN apt-get update \
-    && apt-get install -y supervisor \
-    && mkdir -p /var/log/supervisor
+# SUPERVISOR configuration
 COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Volumes to share
+WORKDIR /var/www
+VOLUME /var/www
 
 # Main process
 CMD ["/usr/bin/supervisord"]
