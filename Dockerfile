@@ -14,6 +14,7 @@ MAINTAINER alban.montaigu@gmail.com
 # Let the conatiner know that there is no tty
 ENV DEBIAN_FRONTEND noninteractive
 
+
 # ----------------------------------------------------------------------------------------------------------------
 # Under this line, this is the official php install process
 #
@@ -81,16 +82,20 @@ RUN buildDeps=" \
 COPY ./php/docker-php-ext-* /usr/local/bin/
 COPY ./php/php-fpm.conf /usr/local/etc/
 
-WORKDIR /var/www/html
+WORKDIR /var/www
+VOLUME /var/www
 
 
 # ----------------------------------------------------------------------------------------------------------------
-# Under this line, customization and supervisord stuff
+# Under this line, customization nginx and finally supervisord stuff
 #
 # @see https://github.com/ngineered/nginx-php-fpm
 # @see https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps
 # @see https://docs.docker.com/articles/using_supervisord/
 # ----------------------------------------------------------------------------------------------------------------
+
+# NGINX tuning for PHP
+COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
 
 # Supervisor install and configuration
 RUN apt-get update \
