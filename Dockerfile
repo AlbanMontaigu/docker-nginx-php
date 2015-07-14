@@ -89,8 +89,8 @@ COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.co
 COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Volumes to share
+VOLUME ["/var/www", "/var/log/supervisor"]
 WORKDIR /var/www
-VOLUME /var/www
 
 # Main process
 CMD ["/usr/bin/supervisord"]
