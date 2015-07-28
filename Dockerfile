@@ -84,6 +84,7 @@ RUN buildDeps=" \
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
+COPY ./nginx/conf/conf.d/proxy.conf /etc/nginx/conf.d/proxy.conf
 
 # SUPERVISOR configuration
 COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
