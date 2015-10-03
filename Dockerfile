@@ -23,7 +23,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     GPG_KEYS="6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1"
 
 # System update & persistent / runtime deps && phpize deps
-RUN apt-get update && apt-get upgrade -y \
+RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y ca-certificates curl libpcre3 librecode0 libsqlite3-0 libxml2 --no-install-recommends \
     && apt-get install -y autoconf file g++ gcc libc-dev make pkg-config re2c --no-install-recommends \
     && apt-get install -y supervisor \
