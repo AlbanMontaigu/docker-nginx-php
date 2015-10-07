@@ -88,7 +88,7 @@ RUN buildDeps=" \
 # @see http://www.cyberciti.biz/faq/rhel-linux-install-suhosin-php-protection/
 RUN mkdir -p /usr/src/php-suhosin \
     && cd /usr/src/php-suhosin \
-    && curl -SL "http://download.suhosin.org/suhosin-0.9.27.tgz" -o suhosin.tgz \
+    && curl -SL "https://download.suhosin.org/suhosin-0.9.38.tar.gz" -o suhosin.tgz \
     && tar -xof suhosin.tgz -C /usr/src/php-suhosin --strip-components=1 \
     && rm suhosin.tgz \
     && phpize \
