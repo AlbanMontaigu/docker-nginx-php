@@ -18,6 +18,7 @@ MAINTAINER alban.montaigu@gmail.com
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
     PHP_VERSION="5.6.14" \
+    PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \
     GPG_KEYS="6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1"
@@ -31,9 +32,9 @@ RUN apt-get update \
     && rm -r /var/lib/apt/lists/*
 
 # Custom install custom command for php ext
-COPY ./php/docker-php-ext-* /usr/local/bin/
-COPY ./php/php-fpm.conf /usr/local/etc/
-COPY ./php/php.ini /usr/local/etc/php/
+COPY ./php/bin/docker-php-ext-* /usr/local/bin/
+COPY ./php/etc/php-fpm.conf /usr/local/etc/
+COPY ./php/etc/php/php.ini $PHP_INI_DIR/
 
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
@@ -86,16 +87,18 @@ RUN buildDeps=" \
 
 # Install php suhosin
 # @see http://www.cyberciti.biz/faq/rhel-linux-install-suhosin-php-protection/
+# @see https://github.com/stefanesser/suhosin
+# @see http://www.suhosin.org/stories/install.html
 RUN mkdir -p /usr/src/php-suhosin \
     && cd /usr/src/php-suhosin \
-    && curl -SL "https://download.suhosin.org/suhosin-0.9.38.tar.gz" -o suhosin.tgz \
+    && curl -SL "https://download.suhosin.org/suhosin-$PHP_SUHOSIN_VERSION_.tar.gz" -o suhosin.tgz \
     && tar -xof suhosin.tgz -C /usr/src/php-suhosin --strip-components=1 \
     && rm suhosin.tgz \
     && phpize \
     && ./configure \
     && make \
     && make install \
-    && echo 'extension=suhosin.so' > /usr/local/etc/php/conf.d/ext-suhosin.ini
+    && echo 'extension=suhosin.so' > $PHP_INI_DIR/conf.d/ext-suhosin.ini
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
