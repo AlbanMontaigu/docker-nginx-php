@@ -33,6 +33,7 @@ RUN apt-get update \
 # Custom install custom command for php ext
 COPY ./php/docker-php-ext-* /usr/local/bin/
 COPY ./php/php-fpm.conf /usr/local/etc/
+COPY ./php/php.ini /usr/local/etc/
 
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
@@ -82,6 +83,19 @@ RUN buildDeps=" \
     && { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
     && make clean
+
+# Install php suhosin
+# @see http://www.cyberciti.biz/faq/rhel-linux-install-suhosin-php-protection/
+RUN mkdir -p /usr/src/php-suhosin \
+    && cd mkdir -p /usr/src/php-suhosin \
+    && curl -SL "http://download.suhosin.org/suhosin-0.9.27.tgz" -o suhosin.tgz \
+    && tar -xof suhosin.tgz -C /usr/src/php-suhosin --strip-components=1 \
+    && rm suhosin.tgz \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && echo 'extension=suhosin.so' > /usr/local/etc/php/conf.d/ext-suhosin.ini
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
