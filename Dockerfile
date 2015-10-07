@@ -33,7 +33,7 @@ RUN apt-get update \
 # Custom install custom command for php ext
 COPY ./php/docker-php-ext-* /usr/local/bin/
 COPY ./php/php-fpm.conf /usr/local/etc/
-COPY ./php/php.ini /usr/local/etc/
+COPY ./php/php.ini /usr/local/etc/php/
 
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
