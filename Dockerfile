@@ -6,7 +6,7 @@
 # @see https://github.com/ngineered/nginx-php-fpm
 # @see https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps
 # @see https://docs.docker.com/articles/using_supervisord/
-# @see https://github.com/docker-library/php/blob/a413eb0123d10321928696ffea7442bed7dc0dc7/5.6/fpm/Dockerfile
+# @see https://github.com/docker-library/php/blob/c05f8260ab4b9371923c409d099f37c9eef863a7/5.6/fpm/Dockerfile
 # ================================================================================================================
 
 # Base is a nginx install customized bye me
