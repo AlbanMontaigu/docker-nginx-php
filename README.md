@@ -38,3 +38,5 @@ On GitHub with my [docker-nginx-php](https://github.com/AlbanMontaigu/docker-ngi
 My [nginx](https://hub.docker.com/r/amontaigu/nginx/) docker image and it's [source](https://github.com/AlbanMontaigu/docker-nginx) on GitHub.
 
 Then you will have a nginx front server.
+
+And finally, you can look at my [nginx-php-plus](https://hub.docker.com/r/amontaigu/nginx-php-plus/) image and its [source](https://github.com/AlbanMontaigu/docker-nginx-php-plus) if you want more modules like gd, mbstring, exif, mysqli and so on in your default php installation.
