@@ -85,6 +85,9 @@ RUN buildDeps=" \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
     && make clean
 
+# Install required extensions
+RUN docker-php-ext-install opcache
+
 # Install php suhosin
 # @see http://www.cyberciti.biz/faq/rhel-linux-install-suhosin-php-protection/
 # @see https://github.com/stefanesser/suhosin
