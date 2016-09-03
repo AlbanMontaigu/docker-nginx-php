@@ -10,14 +10,14 @@
 # ================================================================================================================
 
 # Base is a nginx install customized bye me
-FROM amontaigu/nginx:1.10.1
+FROM amontaigu/nginx:1.11.3
 
 # Maintainer
 MAINTAINER alban.montaigu@gmail.com
 
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
-    PHP_VERSION="5.6.22" \
+    PHP_VERSION="5.6.25" \
     PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \
