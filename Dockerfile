@@ -18,6 +18,8 @@ MAINTAINER alban.montaigu@gmail.com
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
     PHP_VERSION="5.6.27" \
+    PHP_FILENAME="php-5.6.27.tar.xz" \
+    PHP_SHA256="16eb544498339d1d855292826e2e547ab01a31600141094959073e5e10e93ab5" \
     PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \
@@ -26,64 +28,87 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 # System update & persistent / runtime deps && phpize deps
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y ca-certificates curl libpcre3 librecode0 libsqlite3-0 libxml2 --no-install-recommends \
     && apt-get install -y autoconf file g++ gcc libc-dev make pkg-config re2c --no-install-recommends \
+    && apt-get install -y ca-certificates curl libedit2 libsqlite3-0 libxml2 xz-utils --no-install-recommends \
     && apt-get install -y supervisor \
     && rm -r /var/lib/apt/lists/*
 
 # Custom install custom command for php ext
-COPY ./php/bin/docker-php-ext-* /usr/local/bin/
-COPY ./php/etc/php-fpm.conf /usr/local/etc/
+COPY ./php/bin/docker-php-* /usr/local/bin/
 COPY ./php/etc/php/php.ini $PHP_INI_DIR/
+COPY ./php/etc/php/php-cli.ini $PHP_INI_DIR/
 
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
     && mkdir -p /var/log/supervisor \
     && chmod +x /usr/local/bin/docker-php-ext-* \
     && set -xe \
-    && for key in $GPG_KEYS; do \
-        gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-    done
+	&& cd /usr/src \
+	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
+	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c - \
+	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o php.tar.xz.asc \
+	&& export GNUPGHOME="$(mktemp -d)" \
+	&& for key in $GPG_KEYS; do \
+		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+	done \
+	&& gpg --batch --verify php.tar.xz.asc php.tar.xz \
+	&& rm -r "$GNUPGHOME"
 
 # Build PHP from source !
-# --enable-mysqlnd is included below because it's harder to compile after the fact the extensions are (since it's a plugin for several extensions, not an extension in itself)
-RUN buildDeps=" \
-        $PHP_EXTRA_BUILD_DEPS \
-        libcurl4-openssl-dev \
-        libpcre3-dev \
-        libreadline6-dev \
-        librecode-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        libxml2-dev \
-        xz-utils \
-    " \
-    && set -x \
-    && apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
-    && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz/from/this/mirror" -o php.tar.xz \
-    && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.xz.asc/from/this/mirror" -o php.tar.xz.asc \
-    && gpg --verify php.tar.xz.asc \
-    && mkdir -p /usr/src/php \
-    && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
-    && rm php.tar.xz* \
-    && cd /usr/src/php \
-    && ./configure \
-        --with-config-file-path="$PHP_INI_DIR" \
-        --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-        $PHP_EXTRA_CONFIGURE_ARGS \
-        --disable-cgi \
-        --enable-mysqlnd \
-        --with-curl \
-        --with-openssl \
-        --with-pcre \
-        --with-readline \
-        --with-recode \
-        --with-zlib \
-    && make -j"$(nproc)" \
-    && make install \
-    && { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
-    && make clean
+RUN set -xe \
+	&& buildDeps=" \
+		$PHP_EXTRA_BUILD_DEPS \
+		libcurl4-openssl-dev \
+		libedit-dev \
+		libsqlite3-dev \
+		libssl-dev \
+		libxml2-dev \
+	" \
+	&& apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+	\
+	&& docker-php-source extract \
+	&& cd /usr/src/php \
+	&& ./configure \
+		--with-config-file-path="$PHP_INI_DIR" \
+		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+		\
+		--disable-cgi \
+		\
+# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically (see https://github.com/docker-library/php/issues/236)
+		--enable-ftp \
+# --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
+		--enable-mbstring \
+# --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
+		--enable-mysqlnd \
+		\
+		--with-curl \
+		--with-libedit \
+		--with-openssl \
+		--with-zlib \
+		\
+		$PHP_EXTRA_CONFIGURE_ARGS \
+	&& make -j"$(nproc)" \
+	&& make install \
+	&& { find /usr/local/bin /usr/local/sbin -type f -executable -exec strip --strip-all '{}' + || true; } \
+	&& make clean \
+	&& docker-php-source delete \
+	\
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $buildDeps
+
+# FPM Configuration
+RUN set -ex \
+	&& cd /usr/local/etc \
+	&& if [ -d php-fpm.d ]; then \
+		# for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
+		sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
+		cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
+	else \
+		# PHP 5.x don't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
+		mkdir php-fpm.d; \
+		cp php-fpm.conf.default php-fpm.d/www.conf; \
+	fi
+COPY ./php/etc/php-fpm.d/*.conf /usr/local/etc/php-fpm.d/
+COPY ./php/etc/php-fpm.conf /usr/local/etc/
 
 # Install required extensions
 RUN docker-php-ext-install opcache
