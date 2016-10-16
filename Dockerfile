@@ -111,7 +111,8 @@ COPY ./php/etc/php-fpm.d/*.conf /usr/local/etc/php-fpm.d/
 COPY ./php/etc/php-fpm.conf /usr/local/etc/
 
 # Install required extensions
-RUN docker-php-ext-install opcache
+RUN docker-php-ext-install opcache \
+    && docker-php-ext-enable opcache
 
 # Install php suhosin
 # @see http://www.cyberciti.biz/faq/rhel-linux-install-suhosin-php-protection/
