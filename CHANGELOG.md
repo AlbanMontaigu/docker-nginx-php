@@ -5,6 +5,7 @@
 - Set suhosin.executor.include.whitelist to "phar" to allow this for app that need it
 - Added php-cli.ini to be more friendly for command line (and composer)
 - Global rework of files to stick to official docker php style
+- Extension configuration fixed
 
 ## 5.6.26 (2016-10-16)
 - Increasing netmask to 172.0.0.0/8 in set_real_ip_from in case of docker network change
