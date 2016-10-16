@@ -1,7 +1,7 @@
 
 ## 5.6.27 (2016-10-17)
 - Update to php 5.6.27
-- Set phar.readonly to On for security
+- Set phar.readonly to On for security (only for global not for cli)
 - Set suhosin.executor.include.whitelist to "phar" to allow this for app that need it
 - Added php-cli.ini to be more friendly for command line (and composer)
 - Global rework of files to stick to official docker php style
