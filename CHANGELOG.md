@@ -5,6 +5,7 @@
 - Update to php 5.6.27
 - Set phar.readonly to On for security
 - Set suhosin.executor.include.whitelist to "phar" to allow this for app that need it
+- Added php-cli.ini to be more friendly for command line (and composer)
 
 ## 1.11.3 (2016-09-03)
 - Update to amontaigu/nginx 1.11.3
