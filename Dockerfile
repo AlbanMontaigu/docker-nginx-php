@@ -41,7 +41,7 @@ COPY ./php/etc/php/php-cli.ini $PHP_INI_DIR/
 # System preparation
 RUN mkdir -p $PHP_INI_DIR/conf.d \
     && mkdir -p /var/log/supervisor \
-    && chmod +x /usr/local/bin/docker-php-ext-* \
+    && chmod +x /usr/local/bin/docker-php-* \
     && set -xe \
 	&& cd /usr/src \
 	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
