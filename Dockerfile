@@ -129,7 +129,7 @@ RUN mkdir -p /usr/src/php-suhosin \
     && make install
 
 # Extension configuration files
-COPY ./php/etc/php/conf.d/* $PHP_INI_DIR/conf.d/*
+COPY ./php/etc/php/conf.d/* $PHP_INI_DIR/conf.d/
 
 # NGINX tuning for PHP
 COPY ./nginx/conf/sites-enabled/default.conf /etc/nginx/sites-enabled/default.conf
