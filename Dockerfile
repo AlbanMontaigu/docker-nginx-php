@@ -27,7 +27,6 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 
 # System update & persistent / runtime deps && phpize deps
 RUN apt-get update \
-    && apt-get upgrade -y \
     && apt-get install -y autoconf file g++ gcc libc-dev make pkg-config re2c --no-install-recommends \
     && apt-get install -y ca-certificates curl libedit2 libsqlite3-0 libxml2 xz-utils --no-install-recommends \
     && apt-get install -y supervisor \
