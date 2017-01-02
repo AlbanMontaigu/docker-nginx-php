@@ -1,4 +1,7 @@
 
+## 5.6.29 (2017-01-02)
+- k
+
 ## 5.6.27 (2016-10-17)
 - Update to php 5.6.27
 - Set phar.readonly to On for security (only for global not for cli)
