@@ -2,6 +2,7 @@
 ## 5.6.29 (2017-01-02)
 - Update to php 5.6.29
 - Now use of base image with no upgrade (bad for layers reuse and stability)
+- Update to nginx 1.11.8
 
 ## 5.6.27 (2016-10-17)
 - Update to php 5.6.27
