@@ -18,7 +18,6 @@ MAINTAINER alban.montaigu@gmail.com
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
     PHP_VERSION="5.6.29" \
-    PHP_FILENAME="php-${PHP_VERSION}.tar.xz" \
     PHP_SHA256="0ff352a433f73e2c82b0d5b283b600402518569bf72a74e247f356dacbf322a7" \
     PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
@@ -43,9 +42,9 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
     && chmod +x /usr/local/bin/docker-php-* \
     && set -xe \
 	&& cd /usr/src \
-	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME/from/this/mirror" -o php.tar.xz \
+	&& curl -fSL "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror" -o php.tar.xz \
 	&& echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c - \
-	&& curl -fSL "https://secure.php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o php.tar.xz.asc \
+	&& curl -fSL "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz.asc/from/this/mirror" -o php.tar.xz.asc \
 	&& export GNUPGHOME="$(mktemp -d)" \
 	&& for key in $GPG_KEYS; do \
 		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
