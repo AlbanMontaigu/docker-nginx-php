@@ -21,7 +21,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     PHP_URL="https://secure.php.net/get/php-5.6.30.tar.xz/from/this/mirror" \
     PHP_ASC_URL="https://secure.php.net/get/php-5.6.30.tar.xz.asc/from/this/mirror" \
     PHP_SHA256="a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805" \
-    PHP_MD5="68753955a8964ae49064c6424f81eb3e"
+    PHP_MD5="68753955a8964ae49064c6424f81eb3e" \
     PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \
