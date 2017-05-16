@@ -56,9 +56,8 @@ RUN apt-get update && apt-get install -y \
        		libsqlite3-0 \
        		libxml2 \
        		xz-utils \
-# 1 first lines were added to original php docker file
-    && apt-get install -y supervisor \
-# Go back to original php docker file
+       		zlib1g-dev \
+       		supervisor \
     && rm -r /var/lib/apt/lists/*
 
 # Custom install custom command for php ext added to original php docker file
