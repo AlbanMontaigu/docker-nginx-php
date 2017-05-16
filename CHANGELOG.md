@@ -3,7 +3,7 @@
 - Update to php 5.6.30
 - Update to nginx 1.13.0
 - Update dockerfile and bin from official php docker build
-- Removed --no-install-recommends since it produces now "not understood"
+- Fixed various issues coming from official php docker build mixed here
 
 ## 5.6.29 (2017-01-02)
 - Update to php 5.6.29
