@@ -72,7 +72,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
     && mkdir -p /var/log/supervisor \
     && chmod +x /usr/local/bin/docker-php-* \
 # Go back to original php docker file
-    set -xe; \
+    && set -xe; \
     	\
     	fetchDeps=' \
     		wget \
