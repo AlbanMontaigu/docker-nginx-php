@@ -117,7 +117,7 @@ RUN set -xe \
 	&& apt-get update && apt-get install -y $buildDeps && rm -rf /var/lib/apt/lists/* \
 	\
 	# Fix libcurl bug
-	&& ln -s /usr/include/x86_64-linux-gnu/curl /usr/include/curl
+	&& ln -s /usr/include/x86_64-linux-gnu/curl /usr/include/curl \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
