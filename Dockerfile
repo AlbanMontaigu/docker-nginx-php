@@ -56,8 +56,6 @@ RUN apt-get update && apt-get install -y \
        		libsqlite3-0 \
        		libxml2 \
        		xz-utils \
-       		zlib1g-dev \
-       		libcurl4-gnutls-dev \
        		supervisor \
     && rm -r /var/lib/apt/lists/*
 
@@ -114,8 +112,12 @@ RUN set -xe \
 		libsqlite3-dev \
 		libssl-dev \
 		libxml2-dev \
+		zlib1g-dev \
 	" \
 	&& apt-get update && apt-get install -y $buildDeps && rm -rf /var/lib/apt/lists/* \
+	\
+	# Fix libcurl bug
+	&& ln -s /usr/include/x86_64-linux-gnu/curl /usr/include/curl
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
