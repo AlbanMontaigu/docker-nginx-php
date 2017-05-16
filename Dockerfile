@@ -48,7 +48,7 @@ ENV PHPIZE_DEPS \
 		make \
 		pkg-config \
 		re2c
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommend \
        		$PHPIZE_DEPS \
        		ca-certificates \
        		curl \
@@ -56,7 +56,6 @@ RUN apt-get update && apt-get install -y \
        		libsqlite3-0 \
        		libxml2 \
        		xz-utils \
-       	--no-install-recommend \
 # 1 first lines were added to original php docker file
     && apt-get install -y supervisor \
 # Go back to original php docker file
