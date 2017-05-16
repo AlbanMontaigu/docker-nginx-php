@@ -32,8 +32,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 # Enable linker optimization (this sorts the hash buckets to improve cache locality, and is non-default)
 # Adds GNU HASH segments to generated executables (this is used if present, and is much faster than sysv hash; in this configuration, sysv hash is also generated)
 # https://github.com/docker-library/php/issues/272
-    PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
-    PHP_CPPFLAGS="$PHP_CFLAGS"
+    PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2" \
+    PHP_CPPFLAGS="$PHP_CFLAGS" \
     PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 # persistent / runtime deps
