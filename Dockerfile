@@ -48,7 +48,7 @@ ENV PHPIZE_DEPS \
 		make \
 		pkg-config \
 		re2c
-RUN apt-get update && apt-get install -y --no-install-recommend \
+RUN apt-get update && apt-get install -y \
        		$PHPIZE_DEPS \
        		ca-certificates \
        		curl \
@@ -78,7 +78,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
     		wget \
     	'; \
     	apt-get update; \
-    	apt-get install -y --no-install-recommends $fetchDeps; \
+    	apt-get install -y $fetchDeps; \
     	rm -rf /var/lib/apt/lists/*; \
     	\
     	mkdir -p /usr/src; \
@@ -115,7 +115,7 @@ RUN set -xe \
 		libssl-dev \
 		libxml2-dev \
 	" \
-	&& apt-get update && apt-get install -y $buildDeps --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y $buildDeps && rm -rf /var/lib/apt/lists/* \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
