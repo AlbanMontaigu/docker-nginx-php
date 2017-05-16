@@ -17,8 +17,8 @@ MAINTAINER alban.montaigu@gmail.com
 
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
-    PHP_VERSION="5.6.29" \
-    PHP_SHA256="0ff352a433f73e2c82b0d5b283b600402518569bf72a74e247f356dacbf322a7" \
+    PHP_VERSION="5.6.30" \
+    PHP_SHA256="a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805" \
     PHP_SUHOSIN_VERSION_="0.9.38" \
     PHP_INI_DIR="/usr/local/etc/php" \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=nginx --with-fpm-group=nginx" \

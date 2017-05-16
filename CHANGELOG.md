@@ -1,4 +1,7 @@
 
+## 5.6.30 (2017-05-09)
+- Update to php 5.6.30
+
 ## 5.6.29 (2017-01-02)
 - Update to php 5.6.29
 - Now use of base image with no upgrade (bad for layers reuse and stability)
