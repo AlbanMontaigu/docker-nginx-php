@@ -2,6 +2,7 @@
 ## 5.6.30 (2017-05-16)
 - Update to php 5.6.30
 - Update to nginx 1.13.0
+- Update dockerfile and bin from official php docker build
 
 ## 5.6.29 (2017-01-02)
 - Update to php 5.6.29
