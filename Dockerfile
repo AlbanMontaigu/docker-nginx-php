@@ -10,7 +10,7 @@
 # ================================================================================================================
 
 # Base is a nginx install customized bye me
-FROM amontaigu/nginx:1.11.8
+FROM amontaigu/nginx:1.13.0
 
 # Maintainer
 MAINTAINER alban.montaigu@gmail.com
