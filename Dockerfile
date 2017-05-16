@@ -100,7 +100,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d \
     			gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
     		done; \
     		gpg --batch --verify php.tar.xz.asc php.tar.xz; \
-    		rm -r "$GNUPGHOME"; \
+    		rm -rf "$GNUPGHOME"; \
     	fi; \
     	\
     	apt-get purge -y --auto-remove $fetchDeps
