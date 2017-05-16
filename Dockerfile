@@ -57,6 +57,7 @@ RUN apt-get update && apt-get install -y \
        		libxml2 \
        		xz-utils \
        		zlib1g-dev \
+       		libcurl4-gnutls-dev \
        		supervisor \
     && rm -r /var/lib/apt/lists/*
 
