@@ -10,10 +10,10 @@
 # ================================================================================================================
 
 # Base is a nginx install customized bye me
-FROM amontaigu/nginx:1.13.0
+FROM amontaigu/nginx:1.13.5
 
 # Maintainer
-MAINTAINER alban.montaigu@gmail.com
+LABEL maintainer="alban.montaigu@gmail.com"
 
 # Environment configuration
 ENV DEBIAN_FRONTEND="noninteractive" \
